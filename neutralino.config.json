@@ -1,0 +1,57 @@
+{
+  "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
+  "applicationId": "com.reviewsource.app",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 0,
+  "documentRoot": "/resources/browser/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "tokenSecurity": "one-time",
+  "logging": {
+    "enabled": true,
+    "writeToLogFile": true
+  },
+  "nativeAllowList": [
+    "app.*",
+    "os.*",
+    "filesystem.*",
+    "storage.*",
+    "clipboard.*",
+    "events.*",
+    "debug.*",
+    "window.*",
+    "updater.*"
+  ],
+  "globalVariables": {
+    "MANIFEST_URL": "https://raw.githubusercontent.com/hohuuduc/reviewagent/main/manifest.json"
+  },
+  "modes": {
+    "window": {
+      "title": "Review Agent",
+      "width": 1400,
+      "height": 900,
+      "minWidth": 800,
+      "minHeight": 600,
+      "fullScreen": false,
+      "alwaysOnTop": false,
+      "icon": "/resources/browser/favicon.ico",
+      "enableInspector": true,
+      "borderless": false,
+      "maximize": false,
+      "hidden": false,
+      "resizable": true,
+      "exitProcessOnClose": true,
+      "useSavedState": true
+    }
+  },
+  "cli": {
+    "binaryName": "review-source-neu",
+    "resourcesPath": "/resources/browser/",
+    "extensionsPath": "/extensions/",
+    "clientLibrary": "/resources/browser/neutralino.js",
+    "binaryVersion": "6.4.0",
+    "clientVersion": "6.4.0"
+  }
+}

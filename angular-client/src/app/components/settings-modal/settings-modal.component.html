@@ -1,0 +1,69 @@
+<div class="modal" [class.active]="active">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>⚙️ Settings</h2>
+            <button class="close-btn" (click)="close()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Connection Settings -->
+            <div class="settings-section">
+                <h4>Ollama config</h4>
+                <div class="form-group">
+                    <label for="ollama-host">Host:</label>
+                    <input type="text" id="ollama-host" placeholder="http://127.0.0.1:11434"
+                        [(ngModel)]="settings.host">
+                </div>
+                <div class="form-group">
+                    <label for="api-key">API Key:</label>
+                    <input type="password" id="api-key" placeholder="This field is optional"
+                        [(ngModel)]="settings.apiKey">
+                </div>
+                <button class="btn btn-secondary" style="width: 100%;" (click)="fetchModels()">
+                    Verify Connection
+                </button>
+                <div class="connection-status" [class.show]="connectionStatusType !== ''"
+                    [class.loading]="connectionStatusType === 'loading'"
+                    [class.success]="connectionStatusType === 'success'"
+                    [class.error]="connectionStatusType === 'error'">
+                    {{connectionStatus}}
+                </div>
+            </div>
+
+            <!-- Model Selection -->
+            <div class="settings-section" [class.hidden]="!showModelSection">
+                <h4>Model config</h4>
+                <div class="form-group">
+                    <label for="model-select">Model:</label>
+                    <select id="model-select" [(ngModel)]="settings.model" (change)="onModelChange()">
+                        <option value="">-- Select model --</option>
+                        <option *ngFor="let model of models" [value]="model">{{model}}</option>
+                    </select>
+                </div>
+
+                <!-- Think Settings -->
+                <div class="form-group">
+                    <label>Thinking Effort:</label>
+                    <!-- GPT-OSS options -->
+                    <div class="think-options" *ngIf="isGptOssModel">
+                        <select [(ngModel)]="settings.thinkLevel">
+                            <option value="low">Low - Fast</option>
+                            <option value="medium">Medium - Balanced</option>
+                            <option value="high">High - Detailed</option>
+                        </select>
+                    </div>
+                    <!-- Other model options -->
+                    <div class="think-options" *ngIf="!isGptOssModel">
+                        <label class="toggle-switch">
+                            <input type="checkbox" [(ngModel)]="settings.thinkLevel">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">Enable reasoning</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" (click)="save()">Save</button>
+        </div>
+    </div>
+</div>

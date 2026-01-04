@@ -1,0 +1,9 @@
+#folders
+node_modules
+.storage
+bin
+logs
+resources
+
+#files
+*.log

@@ -1,0 +1,41 @@
+<div class="panel" [class.collapsed]="isCollapsed">
+    <div class="panel-header" [class.panel-pointer]="!singleMode" (click)="toggleCollapse()"
+        [title]="singleMode ? '' : isCollapsed ? 'Expand' : 'Collapse'">
+        <div class="panel-title">
+            @if (!singleMode) {
+            <svg class="collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                @if (!isCollapsed) {
+                <polyline points="18 15 12 9 6 15"></polyline>
+                }
+                @else {
+                <polyline points="6 9 12 15 18 9"></polyline>
+                }
+            </svg>
+            }
+            {{title}}
+        </div>
+        <div class="header-actions" (click)="$event.stopPropagation()">
+            <select class="language-select" [ngModel]="currentLanguage" (ngModelChange)="onLanguageChange($event)"
+                title="Select language" [disabled]="languageDisabled">
+                <option *ngFor="let lang of availableLanguages" [value]="lang.value">{{lang.label}}</option>
+            </select>
+        </div>
+    </div>
+    @if (!isCollapsed) {
+    <div class="code-editor">
+        @if (codeLines.length === 0) {
+        <div class="code-placeholder">
+            Empty
+        </div>
+        }
+        @for (line of codeLines; track $index) {
+        <div class="code-line">
+            <span class="line-number">{{line.num}}</span>
+            <span class="line-content" [innerHTML]="highlightObject(line)"
+                (click)="onContentClick($event, line)"></span>
+        </div>
+        }
+    </div>
+    }
+</div>

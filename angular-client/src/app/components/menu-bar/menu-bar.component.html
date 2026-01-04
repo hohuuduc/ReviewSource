@@ -1,0 +1,25 @@
+<nav class="menu-bar">
+    <div class="menu-item">
+        <span class="menu-title">File</span>
+        <div class="menu-dropdown">
+            <button class="menu-option" (click)="handleNewEmpty()">New Empty</button>
+            <div class="menu-divider"></div>
+            <button class="menu-option" (click)="handleOpenFile()">Open File</button>
+            <button class="menu-option" (click)="handleOpenFolder()">Open Folder</button>
+            <div class="menu-divider"></div>
+            <button class="menu-option" (click)="handleExit()">Exit</button>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">Options</span>
+        <div class="menu-dropdown">
+            <button class="menu-option" (click)="handleOpenSettings()">⚙️ Settings</button>
+        </div>
+    </div>
+    <div class="menu-item">
+        <span class="menu-title">Help</span>
+        <div class="menu-dropdown">
+            <button class="menu-option" (click)="handleCheckForUpdates()">🔄 Check for Updates</button>
+        </div>
+    </div>
+</nav>

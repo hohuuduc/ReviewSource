@@ -1,0 +1,22 @@
+{
+    "name": "review-agent",
+    "version": "1.0.0",
+    "description": "Review Angent - Neutralino.js + Angular",
+    "type": "module",
+    "scripts": {
+        "dev": "cd angular-client && npm run build && cd .. && neu run",
+        "build": "cd angular-client && npm run build -- --configuration production && cd .. && neu build --release --clean"
+    },
+    "keywords": [
+        "neutralino",
+        "angular",
+        "ai",
+        "code-review",
+        "ollama"
+    ],
+    "author": "DucHo",
+    "license": "MIT",
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

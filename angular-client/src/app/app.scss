@@ -1,0 +1,7 @@
+/* App-specific styles - most styles come from global styles.scss */
+
+/* Override for Angular component encapsulation */
+:host {
+    display: block;
+    height: 100vh;
+}

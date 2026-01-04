@@ -1,0 +1,14 @@
+<div class="modal" [class.active]="active">
+    <div class="modal-content modal-thinking">
+        <div class="modal-body">
+            <div class="thinking-status">
+                <span class="spinner"></span>
+                <span>{{status}}</span>
+            </div>
+            <div class="thinking-content">{{content}}</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        </div>
+    </div>
+</div>

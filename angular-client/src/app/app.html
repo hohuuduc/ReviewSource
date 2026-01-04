@@ -1,0 +1,63 @@
+<div class="app-container" (click)="onDocumentClick($event)">
+  <!-- Menu Bar -->
+  <app-menu-bar (newEmpty)="handleNewEmpty()" (openFile)="handleOpenFile()" (openFolder)="handleOpenFolder()"
+    (exit)="handleExit()" (openSettings)="openSettings()" (checkForUpdates)="handleCheckForUpdates()">
+  </app-menu-bar>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Multi-file mode -->
+    <section class="code-panels multi-file" *ngIf="openedFiles.length > 0">
+      <div class="file-editor" *ngFor="let file of openedFiles">
+        <app-code-editor [codeLines]="file.codeLines" [currentLanguage]="file.language" [title]="file.fileName"
+          [availableLanguages]="availableLanguages" [languageDisabled]="true" (issueClicked)="showIssueTooltip($event)">
+        </app-code-editor>
+      </div>
+    </section>
+
+    <!-- Single-file mode -->
+    <section class="code-panels" *ngIf="openedFiles.length === 0">
+      <app-code-editor [codeLines]="codeLines" [currentLanguage]="currentLanguage"
+        [availableLanguages]="availableLanguages" [languageDisabled]="isLanguageLocked"
+        (languageChange)="onLanguageChange($event)" (issueClicked)="showIssueTooltip($event)"
+        (codePasted)="confirmPaste($event)" [singleMode]="true">
+      </app-code-editor>
+    </section>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" *ngIf="statusMessage" [class.hiding]="isToastHiding">
+    <span class="toast-message">{{statusMessage}}</span>
+  </div>
+
+  <!-- Bottom Actions -->
+  <footer class="bottom-bar">
+    <div class="action-buttons">
+      <button class="btn btn-primary btn-" [disabled]="isReviewing" (click)="handleReview()">
+        <span class="spinner" *ngIf="isReviewing"></span>
+        {{'Review'}}
+      </button>
+    </div>
+  </footer>
+
+  <!-- Settings Modal -->
+  <app-settings-modal [active]="showSettingsModal" [settings]="settings" [models]="models"
+    [connectionStatus]="connectionStatus" [connectionStatusType]="connectionStatusType"
+    [showModelSection]="showModelSection" [isGptOssModel]="isGptOssModel" (closed)="closeSettings()"
+    (saved)="handleSaveSettings($event)" (fetchModelsRequested)="handleFetchModels()" (modelChanged)="onModelChange()">
+  </app-settings-modal>
+
+  <!-- Paste Modal -->
+  <app-paste-modal [active]="showPasteModal" [initialCode]="currentCode" (closed)="closePasteModal()"
+    (confirmed)="confirmPaste($event)">
+  </app-paste-modal>
+
+  <!-- Thinking Modal -->
+  <app-thinking-modal [active]="showThinkingModal" [status]="thinkingStatus" [content]="thinkingContent"
+    (cancelled)="cancelReview()">
+  </app-thinking-modal>
+
+  <!-- Issue Tooltip -->
+  <app-issue-tooltip [active]="showTooltip" [issues]="tooltipIssues" [style]="tooltipStyle">
+  </app-issue-tooltip>
+</div>

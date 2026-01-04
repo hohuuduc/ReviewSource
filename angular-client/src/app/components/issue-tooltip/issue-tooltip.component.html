@@ -1,0 +1,17 @@
+<div class="error-tooltip" [class.hidden]="!active" [style.top]="style.top" [style.left]="style.left"
+    *ngIf="issues.length > 0">
+    <div class="tooltip-content" *ngFor="let issue of issues; let last = last">
+        <div class="tooltip-header">
+            <span class="tooltip-rule">{{issue.violated_rule}}</span>
+            <span class="tooltip-severity" [class.critical]="issue.type === 'Critical'"
+                [class.warning]="issue.type === 'Warning'">
+                {{issue.type}}
+            </span>
+        </div>
+        <p class="tooltip-object" *ngIf="issue.object">
+            <strong>Object:</strong> <code>{{issue.object}}</code>
+        </p>
+        <p class="tooltip-suggestion" *ngIf="issue.suggested_change">💡 {{issue.suggested_change}}</p>
+        <hr class="tooltip-divider" *ngIf="!last">
+    </div>
+</div>
