@@ -110,9 +110,11 @@ body {
 
 .menu-option {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: var(--spacing-sm);
   width: 100%;
+  min-width: max-content;
   padding: var(--spacing-sm) var(--spacing-md);
   border: none;
   background: none;
@@ -121,16 +123,24 @@ body {
   color: var(--text-primary);
   text-align: left;
   transition: background-color 0.15s;
-}
 
-.menu-option:hover:not(.disabled) {
-  background-color: var(--primary);
-  color: white;
-}
+  & span:nth-child(2) {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
 
-.menu-option.disabled {
-  color: var(--text-muted);
-  cursor: not-allowed;
+  &:hover:not(.disabled) {
+    background-color: var(--primary);
+  }
+
+  &:hover:not(.disabled) span {
+    color: white;
+  }
+
+  &.disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
 }
 
 .menu-divider {

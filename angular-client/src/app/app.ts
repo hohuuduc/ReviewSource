@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NeutralinoService } from './services/neutralino.service';
@@ -7,6 +7,7 @@ import { SettingsService, Settings } from './services/settings.service';
 import { FileService } from './services/file.service';
 import { OllamaService, ReviewResult, ReviewIssue } from './services/ollama.service';
 import { UpdateService } from './services/update.service';
+import { LogService } from './services/log.service';
 // Components
 import { MenuBarComponent } from './components/menu-bar/menu-bar.component';
 import { CodeEditorComponent, CodeLine } from './components/code-editor/code-editor.component';
@@ -53,6 +54,7 @@ export class App implements OnInit {
   // Available languages for selection
   availableLanguages: { label: string, value: string }[] = [{ label: "Auto Detect", value: "detect" }];
   isLanguageLocked = false;
+  hasRules = false;
 
   // Review result
   reviewResult: ReviewResult | null = null;
@@ -75,6 +77,15 @@ export class App implements OnInit {
   showSettingsModal = false;
   showPasteModal = false;
   showThinkingModal = false;
+
+  // Computed: Can paste only when no modals are open and in NewEmpty state (no file opened, no folder)
+  get canPaste(): boolean {
+    return !this.showSettingsModal &&
+      !this.showPasteModal &&
+      !this.showThinkingModal &&
+      !this.currentFilePath &&
+      this.openedFiles.length === 0;
+  }
 
   // Form values
   pasteInput = '';
@@ -101,6 +112,7 @@ export class App implements OnInit {
     private fileService: FileService,
     private ollamaService: OllamaService,
     private updateService: UpdateService,
+    private logService: LogService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
   ) { }
@@ -130,12 +142,27 @@ export class App implements OnInit {
       languages.forEach(x => {
         this.availableLanguages.push({ label: x, value: x })
       })
+      this.hasRules = languages.length > 0;
     } catch (error) {
       console.error('Failed to load rules:', error);
     }
 
     this.cdr.detectChanges();
     console.log('App initialized successfully');
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  async handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.ctrlKey && this.canPaste) {
+      switch (event.key) {
+        case 'n':
+          this.handleNewEmpty();
+          break;
+        case 'o':
+          this.handleOpenFile();
+          break;
+      }
+    }
   }
 
   // ========================================
@@ -150,7 +177,7 @@ export class App implements OnInit {
     this.codeLines = [];
     this.openedFiles = [];
     this.hideTooltip();
-    this.setStatus('Reset to empty state', 'success');
+    this.setStatus('Reset to empty state');
     this.cdr.detectChanges();
   }
 
@@ -174,11 +201,11 @@ export class App implements OnInit {
         }
 
         this.updateCodeLines();
-        this.setStatus('File loaded', 'success');
+        this.setStatus('File loaded');
       }
     } catch (error) {
       console.error('Failed to open file:', error);
-      this.setStatus('Failed to open file', 'error');
+      this.setStatus('Failed to open file');
     }
     this.cdr.detectChanges();
   }
@@ -218,11 +245,11 @@ export class App implements OnInit {
           };
         });
 
-        this.setStatus(`Loaded ${files.length} files`, 'success');
+        this.setStatus(`Loaded ${files.length} files`);
       }
     } catch (error) {
       console.error('Failed to open folder:', error);
-      this.setStatus('Failed to open folder', 'error');
+      this.setStatus('Failed to open folder');
     }
     this.cdr.detectChanges();
   }
@@ -232,7 +259,7 @@ export class App implements OnInit {
   }
 
   async handleCheckForUpdates() {
-    this.setStatus('Checking for updates...', '');
+    this.setStatus('Checking for updates...');
 
     try {
       const updateInfo = await this.updateService.checkForUpdates();
@@ -245,24 +272,31 @@ export class App implements OnInit {
         );
 
         if (confirmUpdate && updateInfo.downloadUrl) {
-          this.setStatus('Downloading update...', '');
+          this.setStatus('Downloading update...');
 
           await this.updateService.downloadAndApplyUpdate(updateInfo.downloadUrl);
           // App will restart after update
         } else {
-          this.setStatus('Update skipped', '');
+          this.setStatus('Update skipped');
         }
       } else {
-        this.setStatus(`✅ You are using the latest version (${updateInfo.currentVersion})`, 'success');
+        this.setStatus(`✅ You are using the latest version (${updateInfo.currentVersion})`);
       }
     } catch (error) {
       console.error('Update check failed:', error);
-      this.setStatus('Failed to check for updates', 'error');
+      this.setStatus('Failed to check for updates');
     }
   }
 
   openSettings() {
     this.showSettingsModal = true;
+  }
+
+  async handleOpenLatestLog() {
+    const success = await this.logService.openLatestLog();
+    if (!success) {
+      this.setStatus('No log files found');
+    }
   }
 
   closeSettings() {
@@ -287,7 +321,7 @@ export class App implements OnInit {
       this.currentCode = code;
       this.reviewResult = null;
       this.updateCodeLines();
-      this.setStatus('Code pasted', 'success');
+      this.setStatus('Code pasted');
     }
     this.closePasteModal();
   }
@@ -304,7 +338,6 @@ export class App implements OnInit {
       const isError = !!(issues && issues.length > 0);
       return { num, content, isError, issues };
     });
-    console.log(this.codeLines)
   }
 
   // ========================================
@@ -319,12 +352,12 @@ export class App implements OnInit {
 
   private async handleSingleFileReview() {
     if (!this.currentCode.trim()) {
-      this.setStatus('Please paste or open a code file', 'error');
+      this.setStatus('Please paste or open a code file');
       return;
     }
 
     this.isReviewing = true;
-    this.setStatus('Analyzing code...', '');
+    this.setStatus('Analyzing code...');
 
     // Open thinking modal
     this.thinkingContent = '';
@@ -353,7 +386,8 @@ export class App implements OnInit {
         {
           onThinking: (thinking) => {
             this.thinkingContent = thinking;
-            this.thinkingStatus = 'AI is thinking...';
+            this.cdr.detectChanges();
+
           },
           onContent: (content) => {
             this.thinkingStatus = 'Generating response...';
@@ -368,16 +402,16 @@ export class App implements OnInit {
       this.showThinkingModal = false;
 
       if (result.error) {
-        this.setStatus(`Error: ${result.error}`, 'error');
+        this.setStatus(`Error: ${result.error}`);
       } else {
         const issueCount = result.issues.length;
         const criticalCount = result.issues.filter(i => i.type === 'Critical').length;
         const warningCount = issueCount - criticalCount;
 
         if (issueCount === 0) {
-          this.setStatus('✨ No issues found!', 'success');
+          this.setStatus('✨ No issues found!');
         } else {
-          this.setStatus(`Found ${issueCount} issues (${criticalCount} critical, ${warningCount} warnings)`, 'error');
+          this.setStatus(`Found ${issueCount} issues (${criticalCount} critical, ${warningCount} warnings)`);
         }
       }
 
@@ -387,17 +421,17 @@ export class App implements OnInit {
       if (error instanceof Error)
         switch (error.message) {
           case 'Request cancelled':
-            this.setStatus('Review cancelled', 'error');
+            this.setStatus('Review cancelled');
             break;
           case 'Language is null':
-            this.setStatus('Language not detected', 'error');
+            this.setStatus('Language not detected');
             break;
           default:
-            this.setStatus('See errors in console.', 'error');
+            this.setStatus('See errors in console.');
             console.error(error.message);
         }
       else {
-        this.setStatus('See errors in console.', 'error');
+        this.setStatus('See errors in console.');
         console.error(error);
       }
     } finally {
@@ -444,7 +478,6 @@ export class App implements OnInit {
           {
             onThinking: (thinking) => {
               this.thinkingContent = `${thinking}`;
-              this.thinkingStatus = progress + " - AI is thinking...";
             },
             onContent: () => {
               this.thinkingStatus = progress + " - Generating response...";
@@ -476,9 +509,9 @@ export class App implements OnInit {
       this.showThinkingModal = false;
 
       if (totalIssues === 0) {
-        this.setStatus(`All ${totalFiles} files reviewed - No issues found!`, 'success');
+        this.setStatus(`All ${totalFiles} files reviewed - No issues found!`);
       } else {
-        this.setStatus(`Reviewed ${totalFiles} files - Found ${totalIssues} issues`, 'error');
+        this.setStatus(`Reviewed ${totalFiles} files - Found ${totalIssues} issues`);
       }
     } catch (error) {
       this.showThinkingModal = false;
@@ -486,9 +519,9 @@ export class App implements OnInit {
       this.openedFiles.forEach(f => f.isReviewing = false);
 
       if (error instanceof Error && error.message === 'Request cancelled') {
-        this.setStatus('Review cancelled', 'error');
+        this.setStatus('Review cancelled');
       } else {
-        this.setStatus('See errors in console.', 'error');
+        this.setStatus('See errors in console.');
         console.error(error);
       }
     } finally {
@@ -501,7 +534,7 @@ export class App implements OnInit {
     this.ollamaService.cancelRequest();
     this.showThinkingModal = false;
     this.isReviewing = false;
-    this.setStatus('Review cancelled', '');
+    this.setStatus('Review cancelled');
   }
 
   // ========================================
@@ -513,9 +546,26 @@ export class App implements OnInit {
     this.showTooltip = true;
 
     const rect = (data.event.target as HTMLElement).getBoundingClientRect();
+
+    // Estimate tooltip height based on number of issues (each issue ~100-150px)
+    const estimatedTooltipHeight = Math.max(150, data.issues.length * 120);
+    const tooltipWidth = 400;
+    const margin = 5;
+
+    // Calculate left position (ensure not overflowing right edge)
+    const left = Math.min(rect.left, window.innerWidth - tooltipWidth - margin);
+
+    // Calculate top position
+    let top = rect.bottom + margin;
+
+    // If tooltip would overflow bottom, position it above the element instead
+    if (top + estimatedTooltipHeight > window.innerHeight) {
+      top = Math.max(margin, rect.top - estimatedTooltipHeight - margin);
+    }
+
     this.tooltipStyle = {
-      top: `${rect.bottom + 5}px`,
-      left: `${Math.min(rect.left, window.innerWidth - 420)}px`
+      top: `${top}px`,
+      left: `${left}px`
     };
   }
 
@@ -572,7 +622,7 @@ export class App implements OnInit {
   async handleSaveSettings(newSettings: Settings) {
     this.settings = newSettings;
     if (!this.settings.model) {
-      this.setStatus('Please select a model', 'error');
+      this.setStatus('Please select a model');
       return;
     }
 
@@ -580,11 +630,11 @@ export class App implements OnInit {
       await this.settingsService.saveSettings(this.settings);
       this.ngZone.run(() => {
         this.showSettingsModal = false;
-        this.setStatus('Settings saved', 'success');
+        this.setStatus('Settings saved');
       });
     } catch (error) {
       this.ngZone.run(() => {
-        this.setStatus('Failed to save settings', 'error');
+        this.setStatus('Failed to save settings');
       });
       console.error(error);
     }
@@ -600,7 +650,7 @@ export class App implements OnInit {
   private statusTimeout: ReturnType<typeof setTimeout> | null = null;
   isToastHiding = false;
 
-  setStatus(message: string, type: 'success' | 'error' | '') {
+  setStatus(message: string) {
     // Clear previous timeout
     if (this.statusTimeout) {
       clearTimeout(this.statusTimeout);

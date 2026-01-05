@@ -15,6 +15,7 @@ export class MenuBarComponent {
     @Output() openSettings = new EventEmitter<void>();
     @Output() openFolder = new EventEmitter<void>();
     @Output() checkForUpdates = new EventEmitter<void>();
+    @Output() openLatestLog = new EventEmitter<void>();
 
     handleNewEmpty() {
         this.newEmpty.emit();
@@ -38,5 +39,9 @@ export class MenuBarComponent {
 
     handleCheckForUpdates() {
         this.checkForUpdates.emit();
+    }
+
+    handleOpenLatestLog() {
+        this.openLatestLog.emit();
     }
 }

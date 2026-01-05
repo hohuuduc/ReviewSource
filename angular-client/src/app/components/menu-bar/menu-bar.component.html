@@ -2,24 +2,43 @@
     <div class="menu-item">
         <span class="menu-title">File</span>
         <div class="menu-dropdown">
-            <button class="menu-option" (click)="handleNewEmpty()">New Empty</button>
+            <button class="menu-option" (click)="handleNewEmpty()">
+                <span>New Empty</span>
+                <span>Ctrl + N</span>
+            </button>
             <div class="menu-divider"></div>
-            <button class="menu-option" (click)="handleOpenFile()">Open File</button>
-            <button class="menu-option" (click)="handleOpenFolder()">Open Folder</button>
+            <button class="menu-option" (click)="handleOpenFile()">
+                <span>Open File</span>
+                <span>Ctrl + O</span>
+            </button>
+            <button class="menu-option" (click)="handleOpenFolder()">
+                <span>Open Folder</span>
+            </button>
             <div class="menu-divider"></div>
-            <button class="menu-option" (click)="handleExit()">Exit</button>
+            <button class="menu-option" (click)="handleExit()">
+                <span>Exit</span>
+            </button>
         </div>
     </div>
     <div class="menu-item">
         <span class="menu-title">Options</span>
         <div class="menu-dropdown">
-            <button class="menu-option" (click)="handleOpenSettings()">⚙️ Settings</button>
+            <button class="menu-option" (click)="handleOpenSettings()">
+                <span>Settings</span>
+            </button>
+            <div class="menu-divider"></div>
+            <button class="menu-option" (click)="handleOpenLatestLog()">
+                <span>Latest Log</span>
+            </button>
         </div>
     </div>
     <div class="menu-item">
         <span class="menu-title">Help</span>
         <div class="menu-dropdown">
-            <button class="menu-option" (click)="handleCheckForUpdates()">🔄 Check for Updates</button>
+            <button class="menu-option" (click)="handleCheckForUpdates()" disabled>
+                <span>Check for Updates</span>
+                <span>Dev</span>
+            </button>
         </div>
     </div>
 </nav>

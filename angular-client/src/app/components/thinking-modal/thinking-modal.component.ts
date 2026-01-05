@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, afterEveryRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,6 +14,24 @@ export class ThinkingModalComponent {
     @Input() content = '';
 
     @Output() cancelled = new EventEmitter<void>();
+
+    @ViewChild("thinkingContent") thinkingContent!: ElementRef;
+
+    ngAfterViewInit() {
+        let oldScrollHeight = 0;
+        const el = this.thinkingContent.nativeElement as HTMLDivElement;
+        const mutationObserver = new MutationObserver(() => {
+            if (el.scrollHeight > oldScrollHeight) {
+                el.scrollTo(0, el.scrollHeight);
+                oldScrollHeight = el.scrollHeight;
+            }
+        });
+
+        mutationObserver.observe(el, {
+            characterData: true,
+            subtree: true
+        });
+    }
 
     cancel() {
         this.cancelled.emit();

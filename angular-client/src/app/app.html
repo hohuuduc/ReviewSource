@@ -1,7 +1,8 @@
 <div class="app-container" (click)="onDocumentClick($event)">
   <!-- Menu Bar -->
   <app-menu-bar (newEmpty)="handleNewEmpty()" (openFile)="handleOpenFile()" (openFolder)="handleOpenFolder()"
-    (exit)="handleExit()" (openSettings)="openSettings()" (checkForUpdates)="handleCheckForUpdates()">
+    (exit)="handleExit()" (openSettings)="openSettings()" (checkForUpdates)="handleCheckForUpdates()"
+    (openLatestLog)="handleOpenLatestLog()">
   </app-menu-bar>
 
   <!-- Main Content -->
@@ -18,7 +19,7 @@
     <!-- Single-file mode -->
     <section class="code-panels" *ngIf="openedFiles.length === 0">
       <app-code-editor [codeLines]="codeLines" [currentLanguage]="currentLanguage"
-        [availableLanguages]="availableLanguages" [languageDisabled]="isLanguageLocked"
+        [availableLanguages]="availableLanguages" [languageDisabled]="isLanguageLocked" [pasteEnabled]="canPaste"
         (languageChange)="onLanguageChange($event)" (issueClicked)="showIssueTooltip($event)"
         (codePasted)="confirmPaste($event)" [singleMode]="true">
       </app-code-editor>
@@ -33,7 +34,8 @@
   <!-- Bottom Actions -->
   <footer class="bottom-bar">
     <div class="action-buttons">
-      <button class="btn btn-primary btn-" [disabled]="isReviewing" (click)="handleReview()">
+      <button class="btn btn-primary btn-" [disabled]="isReviewing || !hasRules" (click)="handleReview()"
+        [title]="!hasRules ? 'No rules available' : ''">
         <span class="spinner" *ngIf="isReviewing"></span>
         {{'Review'}}
       </button>

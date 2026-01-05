@@ -25,6 +25,7 @@ export class CodeEditorComponent {
     @Input() languageDisabled = false;
     @Input() title: string = "";
     @Input() singleMode: boolean = false;
+    @Input() pasteEnabled: boolean = true;
 
     isCollapsed = false;
 
@@ -37,7 +38,7 @@ export class CodeEditorComponent {
 
     @HostListener('window:keydown', ['$event'])
     async handleKeyboardEvent(event: KeyboardEvent) {
-        if (event.ctrlKey && event.key === 'v') {
+        if (event.ctrlKey && event.key === 'v' && this.pasteEnabled) {
             try {
                 const text = await navigator.clipboard.readText();
                 if (text) {
