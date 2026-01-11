@@ -286,11 +286,10 @@ export class App implements OnInit {
       if (updateInfo.updateAvailable) {
         const confirmUpdate = confirm(
           `New version ${updateInfo.latestVersion} is available!\n` +
-          `Current version: ${updateInfo.currentVersion}\n\n` +
           `Do you want to download and install the update?`
         );
 
-        if (confirmUpdate && updateInfo.downloadUrl) {
+        if (confirmUpdate) {
           this.setStatus('Downloading update...');
 
           await this.updateService.downloadAndApplyUpdate(updateInfo.downloadUrl);
@@ -299,7 +298,7 @@ export class App implements OnInit {
           this.setStatus('Update skipped');
         }
       } else {
-        this.setStatus(`✅ You are using the latest version (${updateInfo.currentVersion})`);
+        this.setStatus(`You are using the latest version.`);
       }
     } catch (error) {
       console.error('Update check failed:', error);

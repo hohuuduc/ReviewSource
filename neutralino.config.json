@@ -25,7 +25,7 @@
     "updater.*"
   ],
   "globalVariables": {
-    "MANIFEST_URL": "https://raw.githubusercontent.com/hohuuduc/reviewagent/main/manifest.json"
+    "MANIFEST_URL": "https://raw.githubusercontent.com/hohuuduc/ReviewSource/main/dist"
   },
   "modes": {
     "window": {
@@ -47,7 +47,7 @@
     }
   },
   "cli": {
-    "binaryName": "review-source-neu",
+    "binaryName": "review-agent",
     "resourcesPath": "/resources/browser/",
     "extensionsPath": "/extensions/",
     "clientLibrary": "/resources/browser/neutralino.js",

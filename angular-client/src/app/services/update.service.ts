@@ -3,11 +3,9 @@ import { Injectable } from '@angular/core';
 declare const Neutralino: any;
 
 export interface UpdateInfo {
-    currentVersion: string;
     latestVersion: string;
     updateAvailable: boolean;
-    downloadUrl?: string;
-    changelog?: string;
+    downloadUrl: string;
 }
 
 @Injectable({
@@ -40,7 +38,7 @@ export class UpdateService {
 
         try {
             // Fetch manifest from GitHub
-            const response = await fetch(manifestUrl);
+            const response = await fetch(`${manifestUrl}/manifest.json`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch manifest: ${response.status}`);
             }
@@ -48,19 +46,18 @@ export class UpdateService {
             const manifest = await response.json();
             const latestVersion = manifest.version;
             const updateAvailable = this.compareVersions(latestVersion, currentVersion) > 0;
-
+            const downloadUrl = `${manifestUrl}/review-agent/resources.neu`
             return {
-                currentVersion,
                 latestVersion,
                 updateAvailable,
-                downloadUrl: manifest.resourcesURL,
-                changelog: manifest.changelog
+                downloadUrl
             };
         } catch (error) {
             console.error('Failed to check for updates:', error);
             throw error;
         }
     }
+
 
     async downloadAndApplyUpdate(downloadUrl: string): Promise<void> {
         if (typeof Neutralino === 'undefined') {
@@ -77,30 +74,28 @@ export class UpdateService {
             }
 
             const arrayBuffer = await response.arrayBuffer();
-            const uint8Array = new Uint8Array(arrayBuffer);
 
-            // Convert to base64 for Neutralino filesystem API
-            let binary = '';
-            for (let i = 0; i < uint8Array.length; i++) {
-                binary += String.fromCharCode(uint8Array[i]);
+            console.log(`Downloaded ${arrayBuffer.byteLength} bytes`);
+
+            // Validate download
+            if (arrayBuffer.byteLength === 0) {
+                throw new Error('Downloaded file is empty');
             }
-            const base64Data = btoa(binary);
 
-            // Get the path to resources.neu (same directory as the executable)
-            const appPath = await Neutralino.app.getPath();
-            const resourcesNeuPath = `${appPath}/resources.neu`;
+            const basePath = (window as any).NL_CWD || (window as any).NL_PATH;
+            const resourcesPath = `${basePath}/resources.neu`;
 
-            console.log('Writing update to:', resourcesNeuPath);
+            console.log('Writing update to:', resourcesPath);
 
-            // Write the new resources.neu file
-            await Neutralino.filesystem.writeBinaryFile(resourcesNeuPath, base64Data);
+            // Write ArrayBuffer directly to resources.neu
+            // Neutralino.filesystem.writeBinaryFile expects ArrayBuffer, not base64
+            await Neutralino.filesystem.writeBinaryFile(resourcesPath, arrayBuffer);
+            console.log('Update written successfully. Restarting...');
 
-            console.log('Update applied successfully. Restarting...');
-
-            // Restart the application to apply updates
+            // Restart the application
             await Neutralino.app.restartProcess();
         } catch (error) {
-            console.error('Failed to apply update:', error);
+            console.error('Failed to download update:', error);
             throw error;
         }
     }

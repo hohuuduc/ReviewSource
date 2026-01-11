@@ -27,7 +27,7 @@ const __dirname = path.dirname(__filename);
 // Configuration
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
 const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY || '';
-const RUNS_PER_MODEL = 2;
+const RUNS_PER_MODEL = 1;
 
 // Model configurations to test
 const MODEL_CONFIGS: ModelConfig[] = [
