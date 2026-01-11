@@ -1,0 +1,67 @@
+{
+    "language": "vb",
+    "critical_rules": [
+        {
+            "no": "VB-C01",
+            "description": "Missing 'Using' block for IDisposable objects (SqlConnection, FileStream, StreamReader, etc.). Resources must be wrapped in Using blocks to ensure proper disposal.",
+            "target": "New SqlConnection, New FileStream, New StreamReader, New StreamWriter, IDisposable objects"
+        },
+        {
+            "no": "VB-C02",
+            "description": "Object not properly disposed. Disposable objects created outside Using blocks must call Dispose() or Close() in Finally block.",
+            "target": "IDisposable objects, Connection objects, Stream objects"
+        },
+        {
+            "no": "VB-C03",
+            "description": "Empty Catch block that swallows exceptions without any handling or logging. All Catch blocks must contain meaningful error handling.",
+            "target": "Catch blocks, Exception handlers"
+        },
+        {
+            "no": "VB-C04",
+            "description": "Catching generic Exception instead of specific exception types. Use specific exceptions like SqlException, IOException, etc.",
+            "target": "Catch Ex As Exception, Catch blocks"
+        },
+        {
+            "no": "VB-C05",
+            "description": "Missing logging or error reporting in Catch block. Exceptions must be logged for debugging purposes.",
+            "target": "Catch blocks without logging statements"
+        }
+    ],
+    "warning_rules": [
+        {
+            "no": "VB-W01",
+            "description": "Missing Null check before accessing object properties or methods. Check If obj IsNot Nothing before accessing members.",
+            "target": "Object property access, method calls on nullable objects"
+        },
+        {
+            "no": "VB-W02",
+            "description": "Unreachable code detected. Code after Return, Exit, or unconditional Throw statements will never execute.",
+            "target": "Code after Return, Exit Sub, Exit Function, Throw"
+        },
+        {
+            "no": "VB-W03",
+            "description": "Missing prefix for UI controls. Use standard prefixes: txt (TextBox), btn (Button), lbl (Label), cbo (ComboBox), lst (ListBox), dgv (DataGridView), etc.",
+            "target": "Control names, Form controls"
+        },
+        {
+            "no": "VB-W04",
+            "description": "Magic number detected. Use named constants (Const) instead of hard-coded numeric values for better maintainability.",
+            "target": "Numeric literals in code, hard-coded values"
+        },
+        {
+            "no": "VB-W05",
+            "description": "Unused variable detected. Remove or use declared variables to keep code clean.",
+            "target": "Dim statements, variable declarations"
+        },
+        {
+            "no": "VB-W06",
+            "description": "Line exceeds 50 characters. Break long lines for better readability.",
+            "target": "Long code lines"
+        },
+        {
+            "no": "VB-W07",
+            "description": "Function/Sub exceeds 60 lines. Refactor into smaller, focused methods.",
+            "target": "Function bodies, Sub bodies"
+        }
+    ]
+}

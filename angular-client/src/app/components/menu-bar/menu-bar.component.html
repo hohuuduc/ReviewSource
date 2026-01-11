@@ -30,6 +30,13 @@
             <button class="menu-option" (click)="handleOpenLatestLog()">
                 <span>Latest Log</span>
             </button>
+            <button class="menu-option" (click)="handleLoadAddins()">
+                <span>Load Addins</span>
+            </button>
+            <div class="menu-divider" *ngIf="addins.length > 0"></div>
+            <button class="menu-option" *ngFor="let addin of addins" (click)="handleAddinClick(addin)">
+                <span>{{addin.metadata.name}}</span>
+            </button>
         </div>
     </div>
     <div class="menu-item">

@@ -1,0 +1,367 @@
+{
+    "language": "sql",
+    "testCases": [
+        {
+            "id": "SQL-TC01",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Orders WHERE YEAR(OrderDate) = 2024",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "YEAR(OrderDate)",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC02",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Employees WHERE CONVERT(VARCHAR, HireDate, 103) = '01/01/2024'",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "CONVERT(VARCHAR, HireDate, 103)",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC03",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Products WHERE ISNULL(CategoryID, 0) = 5",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "ISNULL(CategoryID, 0)",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC04",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Customers WHERE UPPER(LastName) = 'SMITH'",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "UPPER(LastName)",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC05",
+            "category": "Performance",
+            "sourceCode": "SELECT OrderID FROM Orders WHERE CustomerID IN (\n    SELECT CustomerID FROM Customers WHERE RegionID IN (\n        SELECT RegionID FROM Regions WHERE Country = 'USA'\n    )\n)",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "SELECT CustomerID FROM Customers WHERE RegionID IN",
+                    "type": "Critical",
+                    "rule": "SQL-C02"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC06",
+            "category": "Performance",
+            "sourceCode": "SELECT ProductName FROM Products WHERE CategoryID IN (\n    SELECT CategoryID FROM Categories WHERE ParentID IN (\n        SELECT CategoryID FROM Categories WHERE Name IN (\n            SELECT Name FROM CategoryTemplates\n        )\n    )\n)",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "Nested subquery",
+                    "type": "Critical",
+                    "rule": "SQL-C02"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC07",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Orders WHERE CustomerID IN (\n    SELECT CustomerID FROM Customers\n)",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "IN (SELECT CustomerID FROM Customers)",
+                    "type": "Critical",
+                    "rule": "SQL-C03"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC08",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Products WHERE ProductID NOT IN (\n    SELECT ProductID FROM OrderDetails\n)",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "NOT IN (SELECT ProductID FROM OrderDetails)",
+                    "type": "Critical",
+                    "rule": "SQL-C03"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC09",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Invoices WHERE MONTH(InvoiceDate) = 12 AND YEAR(InvoiceDate) = 2023",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "MONTH(InvoiceDate)",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "YEAR(InvoiceDate)",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC10",
+            "category": "Performance",
+            "sourceCode": "SELECT * FROM Users WHERE DATEDIFF(DAY, CreatedDate, GETDATE()) > 30",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "DATEDIFF(DAY, CreatedDate, GETDATE())",
+                    "type": "Critical",
+                    "rule": "SQL-C01"
+                },
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC11",
+            "category": "Best Practice",
+            "sourceCode": "SELECT * FROM Customers",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC12",
+            "category": "Best Practice",
+            "sourceCode": "SELECT * FROM Orders o INNER JOIN Customers c ON o.CustomerID = c.CustomerID",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC13",
+            "category": "Best Practice",
+            "sourceCode": "INSERT INTO Logs SELECT * FROM TempLogs",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC14",
+            "category": "Best Practice",
+            "sourceCode": "CREATE VIEW vw_AllOrders AS SELECT * FROM Orders",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC15",
+            "category": "Best Practice",
+            "sourceCode": "SELECT * INTO #TempTable FROM Products WHERE CategoryID = 1",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                },
+                {
+                    "line": 1,
+                    "object": "1",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC16",
+            "category": "Logic/Style",
+            "sourceCode": "DECLARE @unused INT\nDECLARE @count INT\nSET @count = 10\nSELECT TOP (@count) * FROM Products",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "@unused",
+                    "type": "Warning",
+                    "rule": "SQL-W03"
+                },
+                {
+                    "line": 3,
+                    "object": "10",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                },
+                {
+                    "line": 4,
+                    "object": "SELECT *",
+                    "type": "Warning",
+                    "rule": "SQL-W01"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC17",
+            "category": "Logic/Style",
+            "sourceCode": "SELECT CustomerID, 'Active' AS Status FROM Customers WHERE IsActive = 1",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "'Active'",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                },
+                {
+                    "line": 1,
+                    "object": "1",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC18",
+            "category": "Logic/Style",
+            "sourceCode": "DECLARE @temp1 INT, @temp2 VARCHAR(50), @temp3 DATETIME\nSELECT COUNT(*) FROM Orders",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "@temp1",
+                    "type": "Warning",
+                    "rule": "SQL-W03"
+                },
+                {
+                    "line": 1,
+                    "object": "@temp2",
+                    "type": "Warning",
+                    "rule": "SQL-W03"
+                },
+                {
+                    "line": 1,
+                    "object": "@temp3",
+                    "type": "Warning",
+                    "rule": "SQL-W03"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC19",
+            "category": "Logic/Style",
+            "sourceCode": "SELECT ProductName, 100 AS DefaultQty, 'USD' AS Currency FROM Products",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "100",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                },
+                {
+                    "line": 1,
+                    "object": "'USD'",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                }
+            ]
+        },
+        {
+            "id": "SQL-TC20",
+            "category": "Logic/Style",
+            "sourceCode": "DECLARE @x INT\nDECLARE @y INT\nSELECT @y = 5\nPRINT @y",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "@x",
+                    "type": "Warning",
+                    "rule": "SQL-W03"
+                },
+                {
+                    "line": 3,
+                    "object": "5",
+                    "type": "Warning",
+                    "rule": "SQL-W02"
+                }
+            ]
+        }
+    ]
+}

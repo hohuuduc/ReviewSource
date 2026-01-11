@@ -1,8 +1,9 @@
 <div class="app-container" (click)="onDocumentClick($event)">
   <!-- Menu Bar -->
-  <app-menu-bar (newEmpty)="handleNewEmpty()" (openFile)="handleOpenFile()" (openFolder)="handleOpenFolder()"
-    (exit)="handleExit()" (openSettings)="openSettings()" (checkForUpdates)="handleCheckForUpdates()"
-    (openLatestLog)="handleOpenLatestLog()">
+  <app-menu-bar [addins]="loadedAddins" (newEmpty)="handleNewEmpty()" (openFile)="handleOpenFile()"
+    (openFolder)="handleOpenFolder()" (exit)="handleExit()" (openSettings)="openSettings()"
+    (checkForUpdates)="handleCheckForUpdates()" (openLatestLog)="handleOpenLatestLog()"
+    (loadAddins)="handleLoadAddins()" (addinClick)="handleAddinClick($event)">
   </app-menu-bar>
 
   <!-- Main Content -->
@@ -62,4 +63,9 @@
   <!-- Issue Tooltip -->
   <app-issue-tooltip [active]="showTooltip" [issues]="tooltipIssues" [style]="tooltipStyle">
   </app-issue-tooltip>
+
+  <!-- Addin Dialog -->
+  <app-addin-dialog [active]="showAddinDialog" [title]="addinDialogTitle" [content]="addinDialogContent"
+    (closed)="closeAddinDialog()">
+  </app-addin-dialog>
 </div>

@@ -1,0 +1,11 @@
+<div class="modal-overlay" *ngIf="active" (click)="onOverlayClick($event)">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
+            <button class="modal-close" (click)="close()">&times;</button>
+        </div>
+        <div class="modal-body" #contentContainer>
+            <!-- Addin content will be injected here -->
+        </div>
+    </div>
+</div>

@@ -1,5 +1,6 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Addin } from '../../services/addin.service';
 
 @Component({
     selector: 'app-menu-bar',
@@ -9,6 +10,8 @@ import { CommonModule } from '@angular/common';
     styleUrl: './menu-bar.component.scss'
 })
 export class MenuBarComponent {
+    @Input() addins: Addin[] = [];
+
     @Output() newEmpty = new EventEmitter<void>();
     @Output() openFile = new EventEmitter<void>();
     @Output() exit = new EventEmitter<void>();
@@ -16,6 +19,8 @@ export class MenuBarComponent {
     @Output() openFolder = new EventEmitter<void>();
     @Output() checkForUpdates = new EventEmitter<void>();
     @Output() openLatestLog = new EventEmitter<void>();
+    @Output() loadAddins = new EventEmitter<void>();
+    @Output() addinClick = new EventEmitter<Addin>();
 
     handleNewEmpty() {
         this.newEmpty.emit();
@@ -43,5 +48,13 @@ export class MenuBarComponent {
 
     handleOpenLatestLog() {
         this.openLatestLog.emit();
+    }
+
+    handleLoadAddins() {
+        this.loadAddins.emit();
+    }
+
+    handleAddinClick(addin: Addin) {
+        this.addinClick.emit(addin);
     }
 }

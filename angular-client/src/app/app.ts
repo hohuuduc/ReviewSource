@@ -8,6 +8,7 @@ import { FileService } from './services/file.service';
 import { OllamaService, ReviewResult, ReviewIssue } from './services/ollama.service';
 import { UpdateService } from './services/update.service';
 import { LogService } from './services/log.service';
+import { AddinService, Addin, AddinPayload, SetFileData, SetFilesData } from './services/addin.service';
 // Components
 import { MenuBarComponent } from './components/menu-bar/menu-bar.component';
 import { CodeEditorComponent, CodeLine } from './components/code-editor/code-editor.component';
@@ -15,6 +16,7 @@ import { SettingsModalComponent } from './components/settings-modal/settings-mod
 import { PasteModalComponent } from './components/paste-modal/paste-modal.component';
 import { ThinkingModalComponent } from './components/thinking-modal/thinking-modal.component';
 import { IssueTooltipComponent } from './components/issue-tooltip/issue-tooltip.component';
+import { AddinDialogComponent } from './components/addin-dialog/addin-dialog.component';
 import { data } from './mock-data';
 
 // Interface for opened files
@@ -40,6 +42,7 @@ export interface OpenedFile {
     PasteModalComponent,
     ThinkingModalComponent,
     IssueTooltipComponent,
+    AddinDialogComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -77,6 +80,12 @@ export class App implements OnInit {
   showSettingsModal = false;
   showPasteModal = false;
   showThinkingModal = false;
+  showAddinDialog = false;
+
+  // Addin state
+  loadedAddins: Addin[] = [];
+  addinDialogTitle = '';
+  addinDialogContent: HTMLElement | null = null;
 
   // Computed: Can paste only when no modals are open and in NewEmpty state (no file opened, no folder)
   get canPaste(): boolean {
@@ -113,9 +122,15 @@ export class App implements OnInit {
     private ollamaService: OllamaService,
     private updateService: UpdateService,
     private logService: LogService,
+    private addinService: AddinService,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
-  ) { }
+  ) {
+    // Subscribe to addin send events
+    this.addinService.onSend.subscribe((payload: AddinPayload) => {
+      this.handleAddinPayload(payload);
+    });
+  }
 
   async ngOnInit() {
     console.log('Initializing app...');
@@ -146,6 +161,9 @@ export class App implements OnInit {
     } catch (error) {
       console.error('Failed to load rules:', error);
     }
+
+    // Load addins
+    await this.handleLoadAddins();
 
     this.cdr.detectChanges();
     console.log('App initialized successfully');
@@ -250,8 +268,9 @@ export class App implements OnInit {
     } catch (error) {
       console.error('Failed to open folder:', error);
       this.setStatus('Failed to open folder');
+    } finally {
+      this.cdr.detectChanges();
     }
-    this.cdr.detectChanges();
   }
 
   handleExit() {
@@ -676,5 +695,107 @@ export class App implements OnInit {
         }, 300);
       }, 3000);
     }
+  }
+
+  // ========================================
+  // Addin Handlers
+  // ========================================
+  async handleLoadAddins() {
+    try {
+      this.loadedAddins = await this.addinService.loadAddins();
+      console.log(`Loaded ${this.loadedAddins.length} addins`);
+      if (this.loadedAddins.length > 0) {
+        this.setStatus(`Loaded ${this.loadedAddins.length} addin(s)`);
+      }
+    } catch (error) {
+      console.error('Failed to load addins:', error);
+    }
+    this.cdr.detectChanges();
+  }
+
+  handleAddinClick(addin: Addin) {
+    const api = this.addinService.createApi(this.settings);
+    const result = this.addinService.executeAddin(addin, api);
+
+    switch (result.type) {
+      case 'dialog':
+        this.addinDialogTitle = addin.metadata.name;
+        this.addinDialogContent = result.element;
+        this.showAddinDialog = true;
+        break;
+      case 'action':
+        this.setStatus(`${addin.metadata.name} executed`);
+        break;
+      case 'error':
+        this.setStatus(`Error: ${result.message}`);
+        break;
+    }
+    this.cdr.detectChanges();
+  }
+
+  handleAddinPayload(payload: AddinPayload) {
+    this.ngZone.run(() => {
+      switch (payload.action) {
+        case 'setFile':
+          this.handleAddinSetFile(payload.data);
+          break;
+        case 'setFiles':
+          this.handleAddinSetFiles(payload.data);
+          break;
+      }
+      // Close addin dialog after action
+      this.showAddinDialog = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  private handleAddinSetFile(data: SetFileData) {
+    this.currentFilePath = data.filePath || null;
+    this.currentCode = data.content;
+    this.currentLanguage = data.language || 'detect';
+    this.isLanguageLocked = !!data.language;
+    this.reviewResult = null;
+    this.openedFiles = []; // Clear multi-file mode
+    this.updateCodeLines();
+    this.setStatus('Code set by addin');
+  }
+
+  private handleAddinSetFiles(data: SetFilesData) {
+    // Clear single-file mode
+    this.currentFilePath = null;
+    this.currentCode = '';
+    this.reviewResult = null;
+    this.codeLines = [];
+
+    // Populate openedFiles
+    this.openedFiles = data.files.map(file => {
+      const fileName = file.filePath.split(/[/\\]/).pop() || file.filePath;
+      const language = file.language || 'detect';
+
+      const lines = file.content.split(/\r?\n/);
+      const codeLines: CodeLine[] = lines.map((content, index) => ({
+        num: index + 1,
+        content,
+        isError: false,
+        issues: undefined
+      }));
+
+      return {
+        filePath: file.filePath,
+        fileName,
+        content: file.content,
+        language,
+        codeLines,
+        reviewResult: null,
+        isReviewing: false
+      };
+    });
+
+    this.setStatus(`${data.files.length} files set by addin`);
+  }
+
+  closeAddinDialog() {
+    this.showAddinDialog = false;
+    this.addinDialogContent = null;
   }
 }

@@ -345,7 +345,7 @@ You will receive two inputs:
   "violations": [
     {
       "line": number (use the exact number following the 'L' prefix),
-      "object": "string (the specific variable name or code snippet causing the issue)",
+      "object": "string (the specific variable name or code snippet causing the issue; MUST be extracted verbatim from the source, do not infer or add external information)",
       "type": "Critical" | "Warning",
       "violated_rule": "string (description of the rule being broken)",
       "suggested_change": "string (clear instructions or a code snippet to fix the issue)"

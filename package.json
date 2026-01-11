@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "cd angular-client && npm run build && cd .. && neu run",
-        "build": "cd angular-client && npm run build -- --configuration production && cd .. && neu build --release --clean"
+        "build": "cd angular-client && npm run build -- --configuration production && cd .. && neu build --release --clean",
+        "benchmark": "npx tsx testing/benchmark.ts"
     },
     "keywords": [
         "neutralino",
@@ -17,6 +18,9 @@
     "author": "DucHo",
     "license": "MIT",
     "devDependencies": {
-        "concurrently": "^8.2.2"
+        "@types/node": "^25.0.6",
+        "concurrently": "^8.2.2",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
     }
 }

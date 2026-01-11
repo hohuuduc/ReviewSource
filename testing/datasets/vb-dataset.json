@@ -1,0 +1,1001 @@
+{
+    "language": "vb",
+    "testCases": [
+        {
+            "id": "VB-TC01",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub GetData()\n    Dim conn As New SqlConnection(connectionString)\n    conn.Open()\n    Dim cmd As New SqlCommand(\"SELECT * FROM Users\", conn)\n    Dim reader = cmd.ExecuteReader()\n    While reader.Read()\n        Console.WriteLine(reader(\"Name\"))\n    End While\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "conn",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                },
+                {
+                    "line": 4,
+                    "object": "cmd",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                },
+                {
+                    "line": 5,
+                    "object": "reader",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC02",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub ReadFile(path As String)\n    Dim fs As New FileStream(path, FileMode.Open)\n    Dim sr As New StreamReader(fs)\n    Dim content = sr.ReadToEnd()\n    Console.WriteLine(content)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "fs",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                },
+                {
+                    "line": 3,
+                    "object": "sr",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC03",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub WriteLog(msg As String)\n    Dim sw As New StreamWriter(\"log.txt\", True)\n    sw.WriteLine(msg)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "sw",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC04",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub ProcessData()\n    Dim conn As SqlConnection = Nothing\n    conn = New SqlConnection(connStr)\n    conn.Open()\n    DoSomething(conn)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 3,
+                    "object": "conn",
+                    "type": "Critical",
+                    "rule": "VB-C02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC05",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub LoadImage(path As String)\n    Dim img As New Bitmap(path)\n    pictureBox1.Image = img\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "img",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC06",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub SendRequest(url As String)\n    Dim client As New HttpClient()\n    Dim response = client.GetAsync(url).Result\n    Console.WriteLine(response.StatusCode)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "client",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC07",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub ExportExcel()\n    Dim xlApp As New Excel.Application()\n    Dim xlBook = xlApp.Workbooks.Add()\n    xlBook.SaveAs(\"output.xlsx\")\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "xlApp",
+                    "type": "Critical",
+                    "rule": "VB-C02"
+                },
+                {
+                    "line": 3,
+                    "object": "xlBook",
+                    "type": "Critical",
+                    "rule": "VB-C02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC08",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub CopyFile(src As String, dst As String)\n    Dim fsIn As New FileStream(src, FileMode.Open)\n    Dim fsOut As New FileStream(dst, FileMode.Create)\n    fsIn.CopyTo(fsOut)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "fsIn",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                },
+                {
+                    "line": 3,
+                    "object": "fsOut",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC09",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub ExecuteQuery(sql As String)\n    Dim conn As New OleDbConnection(connStr)\n    Dim cmd As New OleDbCommand(sql, conn)\n    conn.Open()\n    cmd.ExecuteNonQuery()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "conn",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                },
+                {
+                    "line": 3,
+                    "object": "cmd",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC10",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub ZipFiles(folder As String)\n    Dim archive As ZipArchive = ZipFile.Open(\"out.zip\", ZipArchiveMode.Create)\n    archive.CreateEntryFromFile(folder, \"data\")\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "archive",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC11",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub ReadXml(path As String)\n    Dim reader As New XmlTextReader(path)\n    While reader.Read()\n        Console.WriteLine(reader.Name)\n    End While\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "reader",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC12",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub CreateTempFile()\n    Dim tmp As New TempFileCollection()\n    tmp.AddFile(\"temp.txt\", False)\n    File.WriteAllText(\"temp.txt\", \"data\")\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "tmp",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC13",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub PrintDocument()\n    Dim pd As New PrintDocument()\n    pd.PrintPage += AddressOf PrintHandler\n    pd.Print()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "pd",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC14",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub PlaySound(path As String)\n    Dim player As New SoundPlayer(path)\n    player.Play()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "player",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC15",
+            "category": "Resource & Memory",
+            "sourceCode": "Public Sub DownloadFile(url As String)\n    Dim wc As New WebClient()\n    wc.DownloadFile(url, \"file.dat\")\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "wc",
+                    "type": "Critical",
+                    "rule": "VB-C01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC16",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub LoadData()\n    Try\n        Dim data = File.ReadAllText(\"data.txt\")\n    Catch ex As Exception\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC17",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub SaveData(data As String)\n    Try\n        File.WriteAllText(\"out.txt\", data)\n    Catch\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC18",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub ConnectDb()\n    Try\n        connection.Open()\n    Catch ex As Exception\n        ' Handle later\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                },
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC19",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub ParseNumber(s As String)\n    Try\n        Dim n = Integer.Parse(s)\n    Catch ex As Exception\n        MsgBox(\"Error\")\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC20",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub SendEmail()\n    Try\n        smtp.Send(message)\n    Catch\n        Resume Next\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC21",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub ProcessFile(path As String)\n    Try\n        Dim content = File.ReadAllText(path)\n        ProcessContent(content)\n    Catch ex As Exception\n        Dim x = 1\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 5,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                },
+                {
+                    "line": 5,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC22",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub UpdateRecord(id As Integer)\n    Try\n        db.Update(id)\n    Catch ex As Exception\n        Debug.WriteLine(ex.Message)\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC23",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub DeleteFile(path As String)\n    Try\n        File.Delete(path)\n    Catch\n        Console.WriteLine(\"Failed\")\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC24",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub LoadConfig()\n    Try\n        config = JsonConvert.DeserializeObject(File.ReadAllText(\"config.json\"))\n    Catch ex As Exception\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC25",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub CalculateTotal()\n    Try\n        total = items.Sum(Function(x) x.Price)\n    Catch\n        total = 0\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                },
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC26",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub ValidateInput(input As String)\n    Try\n        Validate(input)\n    Catch ex As Exception\n        Return\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                },
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC27",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub CreateBackup()\n    Try\n        File.Copy(source, dest)\n    Catch ex As IOException\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC28",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub InitializeApp()\n    Try\n        LoadModules()\n        LoadPlugins()\n    Catch ex As Exception\n        ' TODO: Add logging\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 5,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                },
+                {
+                    "line": 5,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC29",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub CloseConnection()\n    Try\n        If conn IsNot Nothing Then conn.Close()\n    Catch\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch",
+                    "type": "Critical",
+                    "rule": "VB-C03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC30",
+            "category": "Error Handling",
+            "sourceCode": "Public Sub ParseJson(json As String)\n    Try\n        obj = JsonConvert.DeserializeObject(json)\n    Catch ex As Exception\n        obj = New Object()\n    End Try\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Catch ex As Exception",
+                    "type": "Critical",
+                    "rule": "VB-C04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC31",
+            "category": "Logic",
+            "sourceCode": "Public Sub DisplayName(user As User)\n    Dim name = user.Name.ToUpper()\n    Console.WriteLine(name)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "user.Name",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC32",
+            "category": "Logic",
+            "sourceCode": "Public Sub ProcessOrder(order As Order)\n    Dim total = order.Items.Sum(Function(x) x.Price)\n    Dim discount = order.Customer.Discount\n    ApplyDiscount(total, discount)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "order.Items",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                },
+                {
+                    "line": 3,
+                    "object": "order.Customer",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC33",
+            "category": "Logic",
+            "sourceCode": "Public Function GetValue() As Integer\n    Return 42\n    Dim x = 10\n    Console.WriteLine(x)\nEnd Function",
+            "expectedViolations": [
+                {
+                    "line": 3,
+                    "object": "Dim x = 10",
+                    "type": "Warning",
+                    "rule": "VB-W02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC34",
+            "category": "Logic",
+            "sourceCode": "Public Sub CheckStatus(status As Integer)\n    If status = 1 Then\n        Return\n        UpdateUI()\n    End If\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "UpdateUI()",
+                    "type": "Warning",
+                    "rule": "VB-W02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC35",
+            "category": "Logic",
+            "sourceCode": "Public Sub HandleError()\n    Throw New Exception(\"Fatal error\")\n    CleanupResources()\n    LogError()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 3,
+                    "object": "CleanupResources()",
+                    "type": "Warning",
+                    "rule": "VB-W02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC36",
+            "category": "Logic",
+            "sourceCode": "Public Sub LoadSettings(config As Config)\n    Dim timeout = config.Settings.Timeout\n    Dim retries = config.Settings.Retries\n    Initialize(timeout, retries)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "config.Settings",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC37",
+            "category": "Logic",
+            "sourceCode": "Public Function Calculate(data As DataSet) As Decimal\n    Return data.Tables(0).Rows(0)(\"Value\")\nEnd Function",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "data.Tables(0)",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC38",
+            "category": "Logic",
+            "sourceCode": "Public Sub UpdateList(items As List(Of Item))\n    For Each item In items\n        item.Name = item.Parent.Name & \"_child\"\n    Next\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 3,
+                    "object": "item.Parent",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC39",
+            "category": "Logic",
+            "sourceCode": "Public Sub ExitEarly(flag As Boolean)\n    If flag Then\n        Exit Sub\n        DoCleanup()\n    End If\n    DoWork()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "DoCleanup()",
+                    "type": "Warning",
+                    "rule": "VB-W02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC40",
+            "category": "Logic",
+            "sourceCode": "Public Sub ProcessResponse(response As HttpResponse)\n    Dim body = response.Content.ReadAsStringAsync().Result\n    Console.WriteLine(body)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "response.Content",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC41",
+            "category": "Logic",
+            "sourceCode": "Public Function GetFirst(arr As String()) As String\n    Return arr(0).Trim()\nEnd Function",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "arr(0)",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC42",
+            "category": "Logic",
+            "sourceCode": "Public Sub ShowMessage(result As Result)\n    MsgBox(result.Message.Text)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "result.Message",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC43",
+            "category": "Logic",
+            "sourceCode": "Public Sub ProcessNode(node As TreeNode)\n    Dim parentName = node.Parent.Text\n    Dim childCount = node.Nodes.Count\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "node.Parent",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC44",
+            "category": "Logic",
+            "sourceCode": "Public Function Divide(a As Integer, b As Integer) As Integer\n    If b = 0 Then\n        Throw New DivideByZeroException()\n        Return 0\n    End If\n    Return a / b\nEnd Function",
+            "expectedViolations": [
+                {
+                    "line": 4,
+                    "object": "Return 0",
+                    "type": "Warning",
+                    "rule": "VB-W02"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC45",
+            "category": "Logic",
+            "sourceCode": "Public Sub HandleEvent(sender As Object, e As EventArgs)\n    Dim btn = DirectCast(sender, Button)\n    btn.Parent.BackColor = Color.Red\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 3,
+                    "object": "btn.Parent",
+                    "type": "Warning",
+                    "rule": "VB-W01"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC46",
+            "category": "Code Style",
+            "sourceCode": "Public Class Form1\n    Private TextBox1 As TextBox\n    Private Button1 As Button\n    Private Label1 As Label\nEnd Class",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "TextBox1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 3,
+                    "object": "Button1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 4,
+                    "object": "Label1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC47",
+            "category": "Code Style",
+            "sourceCode": "Public Sub CalculatePrice(qty As Integer)\n    Dim price = qty * 1.5\n    Dim tax = price * 0.1\n    Dim total = price + tax + 25\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "1.5",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 3,
+                    "object": "0.1",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 4,
+                    "object": "25",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC48",
+            "category": "Code Style",
+            "sourceCode": "Public Sub ProcessData()\n    Dim unused As String\n    Dim temp As Integer\n    Dim result = Calculate()\n    Display(result)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "unused",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                },
+                {
+                    "line": 3,
+                    "object": "temp",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC49",
+            "category": "Code Style",
+            "sourceCode": "Public Sub SetTimeout()\n    Dim timeoutMilliseconds = 30000\n    Dim maxRetries = 5\n    Dim bufferSize = 4096\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "30000",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 3,
+                    "object": "5",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 4,
+                    "object": "4096",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC50",
+            "category": "Code Style",
+            "sourceCode": "Public Class CustomerForm\n    Private NameTextBox As TextBox\n    Private SaveButton As Button\n    Private StatusLabel As Label\n    Private ItemsListBox As ListBox\nEnd Class",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "NameTextBox",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 3,
+                    "object": "SaveButton",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 4,
+                    "object": "StatusLabel",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 5,
+                    "object": "ItemsListBox",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC51",
+            "category": "Code Style",
+            "sourceCode": "Public Sub Initialize()\n    Dim x As Integer\n    Dim y As String\n    Dim z As Boolean\n    DoWork()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "x",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                },
+                {
+                    "line": 3,
+                    "object": "y",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                },
+                {
+                    "line": 4,
+                    "object": "z",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC52",
+            "category": "Code Style",
+            "sourceCode": "Public Sub ApplyDiscount(price As Decimal)\n    If price > 100 Then\n        price = price - 10\n    ElseIf price > 50 Then\n        price = price - 5\n    End If\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "100",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 3,
+                    "object": "10",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 4,
+                    "object": "50",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 5,
+                    "object": "5",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC53",
+            "category": "Code Style",
+            "sourceCode": "Public Sub ProcessThis(value As String, unused1 As Integer, unused2 As Boolean)\n    Console.WriteLine(value)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "unused1",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                },
+                {
+                    "line": 1,
+                    "object": "unused2",
+                    "type": "Warning",
+                    "rule": "VB-W05"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC54",
+            "category": "Code Style",
+            "sourceCode": "Public Sub ConfigureConnection()\n    connection.Timeout = 30\n    connection.MaxPoolSize = 100\n    connection.MinPoolSize = 5\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "30",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 3,
+                    "object": "100",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 4,
+                    "object": "5",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC55",
+            "category": "Code Style",
+            "sourceCode": "Public Function GetConnectionStringFromConfigurationFileAndValidateItBeforeReturning() As String\n    Return ConfigurationManager.ConnectionStrings(\"Default\").ConnectionString\nEnd Function",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "GetConnectionStringFromConfigurationFileAndValidateItBeforeReturning",
+                    "type": "Warning",
+                    "rule": "VB-W06"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC56",
+            "category": "Code Style",
+            "sourceCode": "Public Class MainForm\n    Private OKButton As Button\n    Private CancelBtn As Button\n    Private ComboBox1 As ComboBox\nEnd Class",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "OKButton",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 4,
+                    "object": "ComboBox1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC57",
+            "category": "Code Style",
+            "sourceCode": "Public Sub ValidateAndProcessUserInputFromTextBoxAndSaveToDatabase()\n    Dim value = TextBox1.Text\n    Save(value)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 1,
+                    "object": "ValidateAndProcessUserInputFromTextBoxAndSaveToDatabase",
+                    "type": "Warning",
+                    "rule": "VB-W06"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC58",
+            "category": "Code Style",
+            "sourceCode": "Public Sub CreateControls()\n    Dim DataGridView1 As New DataGridView()\n    Dim CheckBox1 As New CheckBox()\n    Dim RadioButton1 As New RadioButton()\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "DataGridView1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 3,
+                    "object": "CheckBox1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 4,
+                    "object": "RadioButton1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC59",
+            "category": "Code Style",
+            "sourceCode": "Public Function GetPageSize() As Integer\n    Return 50\nEnd Function\n\nPublic Function GetMaxItems() As Integer\n    Return 1000\nEnd Function",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "50",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                },
+                {
+                    "line": 6,
+                    "object": "1000",
+                    "type": "Warning",
+                    "rule": "VB-W04"
+                }
+            ]
+        },
+        {
+            "id": "VB-TC60",
+            "category": "Code Style",
+            "sourceCode": "Public Sub InitUI()\n    Dim Panel1 As New Panel()\n    Dim GroupBox1 As New GroupBox()\n    Dim TabControl1 As New TabControl()\n    Me.Controls.Add(Panel1)\n    Me.Controls.Add(GroupBox1)\n    Me.Controls.Add(TabControl1)\nEnd Sub",
+            "expectedViolations": [
+                {
+                    "line": 2,
+                    "object": "Panel1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 3,
+                    "object": "GroupBox1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                },
+                {
+                    "line": 4,
+                    "object": "TabControl1",
+                    "type": "Warning",
+                    "rule": "VB-W03"
+                }
+            ]
+        }
+    ]
+}

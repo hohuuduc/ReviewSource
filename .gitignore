@@ -5,6 +5,8 @@ resources
 .storage
 .logs
 .tmp
+.addins
 
 #files
 *.log
+.bat

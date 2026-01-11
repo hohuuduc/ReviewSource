@@ -1,0 +1,42 @@
+{
+    "language": "sql",
+    "critical_rules": [
+        {
+            "no": "SQL-C01",
+            "description": "Using scalar function on column in WHERE clause prevents index usage (non-SARGable). Move function to the right side or refactor query.",
+            "target": "YEAR(), MONTH(), CONVERT(), CAST(), ISNULL() on columns in WHERE"
+        },
+        {
+            "no": "SQL-C02",
+            "description": "Excessive subquery nesting (more than 2 levels). Refactor using CTEs, temporary tables, or JOINs for better performance.",
+            "target": "Nested SELECT statements, subqueries in WHERE/FROM"
+        },
+        {
+            "no": "SQL-C03",
+            "description": "Inefficient use of IN clause with subquery returning large dataset. Consider using EXISTS or JOIN instead.",
+            "target": "IN (SELECT ...), NOT IN (SELECT ...)"
+        }
+    ],
+    "warning_rules": [
+        {
+            "no": "SQL-W01",
+            "description": "Using SELECT * instead of explicit column list. Specify required columns for better performance and maintainability.",
+            "target": "SELECT * FROM"
+        },
+        {
+            "no": "SQL-W02",
+            "description": "Hard-coded values detected. Use parameters or variables for maintainability.",
+            "target": "String literals, numeric literals in queries"
+        },
+        {
+            "no": "SQL-W03",
+            "description": "Unused variable or parameter. Remove unused declarations.",
+            "target": "DECLARE statements, @variables"
+        },
+        {
+            "no": "SQL-W04",
+            "description": "Missing prefix for variables/tables. Use @ for variables, # for temp tables, standard naming conventions.",
+            "target": "Variable names, table aliases"
+        }
+    ]
+}
